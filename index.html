@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poetry Blog</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        header {
+            background-color: #283593;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        header button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        nav {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+        }
+        nav ul li {
+            padding: 10px;
+            cursor: pointer;
+            color: #283593;
+        }
+        nav ul li:hover {
+            background-color: #f1f1f1;
+        }
+        #loginForm, #addPoetForm {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #loginForm input, #addPoetForm input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #poetsList {
+            margin: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .poet {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .poet:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .poet img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        footer {
+            background-color: #283593;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Poetry Blog</h1>
+        <button id="menuButton">&#9776;</button>
+        <nav id="menu">
+            <ul>
+                <li id="loginOption">Login</li>
+                <li id="addPoetOption">Add New Poet</li>
+                <li id="logoutOption">Logout</li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="loginForm">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="loginButton">Login</button>
+    </div>
+
+    <div id="addPoetForm">
+        <h2>Add New Poet</h2>
+        <input type="text" id="poetName" placeholder="Poet Name">
+        <input type="text" id="poetImage" placeholder="Poet Image URL">
+        <input type="text" id="poetPoem" placeholder="Famous Poem">
+        <button id="addPoetButton">Add Poet</button>
+    </div>
+
+    <div id="poetsList">
+        <!-- List of poets will be dynamically inserted here -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Poetry Blog. All rights reserved. Contact: example@email.com</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const menuButton = document.getElementById("menuButton");
+            const menu = document.getElementById("menu");
+            const loginForm = document.getElementById("loginForm");
+            const addPoetForm = document.getElementById("addPoetForm");
+            const loginOption = document.getElementById("loginOption");
+            const addPoetOption = document.getElementById("addPoetOption");
+            const logoutOption = document.getElementById("logoutOption");
+            const loginButton = document.getElementById("loginButton");
+            const addPoetButton = document.getElementById("addPoetButton");
+            const poetsList = document.getElementById("poetsList");
+
+            let poetsData = [
+                {
+                    name: "William Shakespeare",
+                    image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.almrsal.com%2Fwp-content%2Fuploads%2F2017%2F08%2F%25D9%2588%25D9%258A%25D9%2584%25D9%258A%25D8%25A7%25D9%2585-%25D8%25B4%25D9%2583%25D8%25B3%25D8%25A8%25D9%258A%25D8%25B1-1024x1024.jpg&f=1&nofb=1&ipt=2784c97ffefd89f98a2aa836af0b581f9c28f98b414c8561426519a978da3e19&ipo=images",
+                    poem: "To be, or not to be, that is the question."
+                },
+                {
+                    name: "Emily Dickinson",
+                    image: "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimages.fineartamerica.com%2Fimages%2Fartworkimages%2Fmediumlarge%2F1%2Femily-dickinson-photo-researchers.jpg&f=1&nofb=1&ipt=12669c6e6c60aa7db90261032675cf75805c5add98eecac5d92ec8bab3f3e8da&ipo=images",
+                    poem: "Hope is the thing with feathers that perches in the soul."
+                },
+                // Add more poets data here...
+            ];
+
+            function displayPoets() {
+                poetsList.innerHTML = "";
+                poetsData.forEach(poet => {
+                    const poetElement = document.createElement("div");
+                    poetElement.classList.add("poet");
+                    poetElement.innerHTML = `
+                        <img src="${poet.image}" alt="${poet.name}">
+                        <h2>${poet.name}</h2>
+                        <p>${poet.poem}</p>
+                    `;
+                    poetsList.appendChild(poetElement);
+                });
+            }
+
+            displayPoets();
+
+            menuButton.addEventListener("click", function() {
+                menu.style.display = menu.style.display === "block" ? "none" : "block";
+            });
+
+            loginOption.addEventListener("click", function() {
+                loginForm.style.display = "block";
+                addPoetForm.style.display = "none";
+                menu.style.display = "none";
+            });
+
+            addPoetOption.addEventListener("click", function() {
+                addPoetForm.style.display = "block";
+                loginForm.style.display = "none";
+                menu.style.display = "none";
+            });
+
+            logoutOption.addEventListener("click", function() {
+                alert("Logged out successfully!");
+                loginForm.style.display = "none";
+                addPoetForm.style.display = "none";
+                menu.style.display = "none";
+            });
+
+            loginButton.addEventListener("click", function() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                if (username === "admin" && password === "password") {
+                    alert("Login successful!");
+                    loginForm.style.display = "none";
+                } else {
+                    alert("Invalid credentials!");
+                }
+            });
+
+            addPoetButton.addEventListener("click", function() {
+                const name = document.getElementById("poetName").value;
+                const image = document.getElementById("poetImage").value;
+                const poem = document.getElementById("poetPoem").value;
+                if (name && image && poem) {
+                    poetsData.push({ name, image, poem });
+                    displayPoets();
+                    addPoetForm.style.display = "none";
+                } else {
+                    alert("Please fill in all fields!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
